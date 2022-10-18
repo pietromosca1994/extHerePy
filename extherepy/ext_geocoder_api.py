@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from herepy import GeocoderApi
 
 class extGeocoderApi(GeocoderApi):

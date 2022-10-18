@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from herepy import RmeApi
 from datetime import datetime
 import extUtils
