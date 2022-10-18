@@ -2,7 +2,7 @@
 
 from herepy import RmeApi
 from datetime import datetime
-import extUtils
+from extherepy import extUtils
 import io
 import pandas as pd
 import numpy as np

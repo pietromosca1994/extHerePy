@@ -7,7 +7,7 @@ import flexpolyline
 from typing import List, Dict, Union, Optional, Tuple
 from geopy import distance
 import numpy as np
-import extUtils 
+from extherepy import extUtils 
 
 class extRoutingApi(RoutingApi):
     '''
