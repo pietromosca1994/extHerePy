@@ -110,10 +110,27 @@ def getPolylineMap(route_profile_df: pd.DataFrame,
     return m
 
 def m2km(m: np.array) -> np.array:
+    '''Methods for converting a numpy.array of m to km
+
+    :param numpy.array m: [m]
+
+    :returns: km: [km]
+
+    :rtype: numpy.array
+    '''  
     return m/1000
 
 def plotSegmentsvsTime(route_profile_df: pd.DataFrame, 
                 channel: str):
+    '''Methods for plotting a route channel vs time
+
+    :param pandas.DataFrame route_profile_df: route profile dataframe
+    :param str: channel to plot 
+
+    :returns: plot 
+
+    :rtype: matplotlib.pyplot
+    ''' 
     plt.figure(figsize=(30,5))
     plt.bar(x=route_profile_df['time_i[s]'], 
             height=route_profile_df[channel], 
@@ -128,6 +145,15 @@ def plotSegmentsvsTime(route_profile_df: pd.DataFrame,
 
 def plotSegmentsvsDistance(route_profile_df: pd.DataFrame, 
                 channel: str):
+    '''Methods for plotting a route channel vs distance
+
+    :param pandas.DataFrame route_profile_df: route profile dataframe
+    :param str: channel to plot 
+
+    :returns: plot 
+
+    :rtype: matplotlib.pyplot
+    '''               
     plt.figure(figsize=(30,5))
     plt.bar(x=m2km(route_profile_df['distance_i[m]'].values), 
             height=route_profile_df[channel], 
