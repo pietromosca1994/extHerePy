@@ -4,6 +4,7 @@ import folium
 from branca import colormap as cm
 import pandas as pd
 import matplotlib.pyplot as plt
+import os 
 
 # colormap list
 list_colors = [
@@ -64,7 +65,9 @@ def kmph2mps(kmph: np.array) -> np.array:
     return kmph/3.6
 
 def getPolylineMap(route_profile_df: pd.DataFrame, 
-                    channel: str,
+                    latitude_channel: str = 'latitude[deg]',
+                    longitude_channel: str = 'longitude[deg]',
+                    channel: str = None,
                     channel_min: float = None,
                     channel_max: float = None) -> folium.Map:
 
@@ -79,14 +82,14 @@ def getPolylineMap(route_profile_df: pd.DataFrame,
     '''  
 
     # get folium map 
-    north=  route_profile_df['latitude[deg]'].max()
-    south=  route_profile_df['latitude[deg]'].min()
-    east=   route_profile_df['longitude[deg]'].min()
-    west=   route_profile_df['longitude[deg]'].max()
+    north=  route_profile_df[latitude_channel].max()
+    south=  route_profile_df[latitude_channel].min()
+    east=   route_profile_df[longitude_channel].min()
+    west=   route_profile_df[longitude_channel].max()
 
     m = folium.Map(location=tuple([north, east]))
     m.fit_bounds([[south, west], [north, east]])
-    x_y_coordinates = route_profile_df[['latitude[deg]', 'longitude[deg]']]
+    x_y_coordinates = route_profile_df[[latitude_channel, longitude_channel]]
     polyline = [tuple(x) for x in x_y_coordinates.to_numpy()]
 
     # create colormap
@@ -165,4 +168,46 @@ def plotSegmentsvsDistance(route_profile_df: pd.DataFrame,
     plt.ylabel(channel)
     plt.xticks(m2km(route_profile_df['distance_i[m]'].values), rotation='vertical')
     return plt
-    
+
+def dataframe_to_gpx(input_df, lats_colname='latitude', longs_colname='longitude', times_colname=None, alts_colname=None, output_file=None):
+    '''Methods for converting a dataframe in a gpx file 
+
+    :param str lats_colname
+    :param str longs_colname
+    :param str times_colname
+    :param str alts_colname
+    :param str output_file
+
+    :returns: None 
+
+    :rtype: None
+    '''    
+    if not output_file:
+        raise Exception("[ERROR] Please provide an output file")
+
+    output_extension = os.path.splitext(output_file)[1]
+    if output_extension != ".gpx":
+        raise TypeError(f"[ERROR] output file must be a gpx file")
+
+    import gpxpy.gpx
+    gpx = gpxpy.gpx.GPX()
+
+    # Create first track in our GPX:
+    gpx_track = gpxpy.gpx.GPXTrack()
+    gpx.tracks.append(gpx_track)
+
+    # Create first segment in our GPX track:
+    gpx_segment = gpxpy.gpx.GPXTrackSegment()
+    gpx_track.segments.append(gpx_segment)
+
+    # Create points:
+    for idx in input_df.index:
+
+        gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(input_df.loc[idx, lats_colname],
+                                                            input_df.loc[idx, longs_colname],
+                                                            time=pd.Timestamp(input_df.loc[idx, times_colname], unit='s') if times_colname else None, # timestamp accepted is in unixtime
+                                                            elevation=input_df.loc[idx, alts_colname] if alts_colname else None))
+
+    with open(output_file, 'w') as f:
+        f.write(gpx.to_xml())
+    return gpx.to_xml()
