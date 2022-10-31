@@ -207,7 +207,7 @@ def dataframe2gpx(input_df, lats_colname='latitude', longs_colname='longitude', 
                                                             input_df.loc[idx, longs_colname],
                                                             time=pd.Timestamp(input_df.loc[idx, times_colname], unit='s') if times_colname else None, # timestamp accepted is in unixtime
                                                             elevation=input_df.loc[idx, alts_colname] if alts_colname else None))
-
+    
     with open(output_file, 'w') as f:
         f.write(gpx.to_xml())
     return gpx.to_xml()
