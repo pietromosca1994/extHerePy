@@ -4,7 +4,8 @@ import folium
 from branca import colormap as cm
 import pandas as pd
 import matplotlib.pyplot as plt
-import os 
+import os
+import gpxpy.gpx 
 
 # colormap list
 list_colors = [
@@ -169,7 +170,7 @@ def plotSegmentsvsDistance(route_profile_df: pd.DataFrame,
     plt.xticks(m2km(route_profile_df['distance_i[m]'].values), rotation='vertical')
     return plt
 
-def dataframe_to_gpx(input_df, lats_colname='latitude', longs_colname='longitude', times_colname=None, alts_colname=None, output_file=None):
+def dataframe2gpx(input_df, lats_colname='latitude', longs_colname='longitude', times_colname=None, alts_colname=None, output_file=None):
     '''Methods for converting a dataframe in a gpx file 
 
     :param str lats_colname
@@ -189,7 +190,6 @@ def dataframe_to_gpx(input_df, lats_colname='latitude', longs_colname='longitude
     if output_extension != ".gpx":
         raise TypeError(f"[ERROR] output file must be a gpx file")
 
-    import gpxpy.gpx
     gpx = gpxpy.gpx.GPX()
 
     # Create first track in our GPX:
